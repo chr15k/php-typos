@@ -33,12 +33,7 @@ final class CheckCommand extends Command
         }
 
         $write = (bool) $input->getOption('write');
-        $config = $input->getOption('config');
-
-        $paths = $input->getArgument('paths');
-
         $diff = (bool) $input->getOption('diff');
-        $format = $input->getOption('format');
 
         if ($write && $diff) {
             $output->writeln('<error>❌ --write and --diff cannot be used together.</error>');
@@ -46,9 +41,15 @@ final class CheckCommand extends Command
             return Command::FAILURE;
         }
 
+        $config = $input->getOption('config');
+        $format = $input->getOption('format');
+
+        /** @var list<string> $paths */
+        $paths = (array) $input->getArgument('paths');
+
         $commandArgs = array_merge([$binaryPath], $paths ?: ['.']);
 
-        if ($config) {
+        if (is_string($config) && mb_strlen($config) > 0) {
             $commandArgs[] = '--config';
             $commandArgs[] = $config;
         }
@@ -61,7 +62,7 @@ final class CheckCommand extends Command
             $commandArgs[] = '--diff';
         }
 
-        if ($format) {
+        if (is_string($format) && mb_strlen($format) > 0) {
             $commandArgs[] = '--format';
             $commandArgs[] = $format;
         }

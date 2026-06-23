@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Chr15k\Typos;
 
-use Composer\Autoload\ClassLoader;
-
 final class Config
 {
     private const string CONFIGURATION_FILE = '_typos.toml';
@@ -33,7 +31,7 @@ final class Config
             return false;
         }
 
-        $source = dirname(__DIR__).'/_typos.toml';
+        $source = dirname(__DIR__).'/stubs/_typos.toml';
 
         if (! file_exists($source)) {
             return false;
@@ -44,6 +42,6 @@ final class Config
 
     private static function projectPath(): string
     {
-        return self::$projectPath ??= dirname(array_keys(ClassLoader::getRegisteredLoaders())[0]);
+        return self::$projectPath ??= getcwd();
     }
 }

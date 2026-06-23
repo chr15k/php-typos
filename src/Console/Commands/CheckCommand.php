@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Chr15k\Typos\Console\Commands;
 
 use Chr15k\Typos\Config;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,14 +19,16 @@ final class CheckCommand extends Command
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $path = $input->getOption('path');
-        $path = (is_string($path)) ? $path : '.';
-
         if ($input->getOption('init') || ! Config::exists()) {
             return $this->initConfiguration($output);
         }
 
-        $output->writeln('<info>Scanning codebase for typos...</info>');
+        $paths = $input->getArgument('paths');
+        $paths = is_string($paths) ? $paths : '.';
+
+        $write = (bool) $input->getOption('write');
+
+        $output->writeln("\n<info>Scanning codebase for typos...</info>\n");
 
         $version = '1.47.2';
         $os = PHP_OS_FAMILY;
@@ -60,12 +64,25 @@ final class CheckCommand extends Command
             @chmod($binaryPath, 0755);
         }
 
-        $process = new Process([$binaryPath, $path]);
-        $process->setTimeout(120);
+        $commandArgs = [$binaryPath, $paths];
 
-        $exitCode = $process->run(function (string $type, string $buffer) use ($output): void {
-            $output->write($buffer);
-        });
+        if ($write) {
+            $commandArgs[] = '--write-changes';
+        }
+
+        try {
+            $process = new Process($commandArgs);
+            $process->setTimeout(120);
+            $process->setTty(true);
+
+            $exitCode = $process->run(function (string $type, string $buffer) use ($output): void {
+                $output->write($buffer);
+            });
+        } catch (Exception $exception) {
+            $output->writeln(sprintf('<error>❌ Runtime error: %s</error>', $exception->getMessage()));
+
+            return Command::FAILURE;
+        }
 
         if ($exitCode !== 0) {
             $output->writeln("\n<error>❌ Spellcheck failed. Typos were discovered in code assets.</error>");
@@ -82,7 +99,9 @@ final class CheckCommand extends Command
     {
         $this->setDescription('Run the blacklist spellchecker across the repository source files')
             ->addOption('init', 'i', InputOption::VALUE_NONE, 'Initialize a new configuration file.')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Path to project root.');
+            ->addOption('write', 'w', InputOption::VALUE_NONE, 'Fix typos by writing changes directly to the files.')
+            ->addArgument('paths', InputArgument::OPTIONAL, 'Paths to scan.')
+            ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file (defaults to project root).');
     }
 
     /*
@@ -97,8 +116,8 @@ final class CheckCommand extends Command
         }
 
         $output->writeln("\n<info>✅ Configuration file has been created.</info>");
-        $output->writeln("\n<info>✅ Now you can specify the words or directories to ignore in [_typos.toml].</info>");
-        $output->writeln("\n<info>✅ Then run [./vendor/bin/typos] to check your project for typos.</info>");
+        $output->writeln("\n<info>Now you can specify the words or directories to ignore in [_typos.toml].</info>");
+        $output->writeln("\n<info>Then run [./vendor/bin/typos] to check your project for typos.</info>");
 
         return Command::SUCCESS;
     }

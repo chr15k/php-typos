@@ -8,9 +8,11 @@ extend-exclude = [
     "node_modules",
     "bootstrap/cache",
     "storage",
-    ".git"
+    ".git",
+    "public"
 ]
 
 [default]
 # Add words here (as key-value pairs) that should be skipped globally
-# extend-words = { "flgas" = "flgas" }
+[default.extend-words]
+# creeate = "creeate"

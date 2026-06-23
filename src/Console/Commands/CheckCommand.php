@@ -41,13 +41,13 @@ final class CheckCommand extends Command
             return Command::FAILURE;
         }
 
-        $config = $input->getOption('config');
-        $format = $input->getOption('format');
-
         /** @var list<string> $paths */
         $paths = (array) $input->getArgument('paths');
 
         $commandArgs = array_merge([$binaryPath], $paths ?: ['.']);
+
+        $config = $input->getOption('config');
+        $format = $input->getOption('format');
 
         if (is_string($config) && mb_strlen($config) > 0) {
             $commandArgs[] = '--config';

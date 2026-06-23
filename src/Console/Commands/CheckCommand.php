@@ -17,7 +17,8 @@ final class CheckCommand extends Command
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $path = $input->getOption('path') ?? '.';
+        $path = $input->getOption('path');
+        $path = (is_string($path)) ? $path : '.';
 
         if ($input->getOption('init') || ! Config::exists()) {
             return $this->initConfiguration($output);
@@ -59,7 +60,6 @@ final class CheckCommand extends Command
             @chmod($binaryPath, 0755);
         }
 
-        // Run the binary and pass any downstream flags (like --diff) straight through
         $process = new Process([$binaryPath, $path]);
         $process->setTimeout(120);
 

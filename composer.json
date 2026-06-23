@@ -31,7 +31,7 @@
         }
     },
     "bin": [
-        "bin/php-typos"
+        "bin/typos"
     ],
     "config": {
         "sort-packages": true,

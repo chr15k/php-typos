@@ -63,6 +63,6 @@ it('passes with init option', function (): void {
 
     $output = $commandTester->getDisplay();
 
-    expect(trim($output))->toContain('❌ Configuration file already exists.')
+    expect(mb_trim($output))->toContain('❌ Configuration file already exists.')
         ->and($commandTester->getStatusCode())->toBe(1);
 });

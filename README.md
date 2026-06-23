@@ -5,7 +5,7 @@
 
 <p align="center">
     <p align="center">
-        <a href="https://github.com/chr15k/php-typos/actions"><img alt="GitHub Workflow Status (master)" src="https://img.shields.io/github/actions/workflow/status/chr15k/php-typos/tests.yml"></a>
+        <a href="https://github.com/chr15k/php-typos/actions"><img alt="GitHub Workflow Status (master)" src="https://img.shields.io/github/actions/workflow/status/chr15k/php-typos/main.yml"></a>
         <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/chr15k/php-typos"></a>
         <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="Latest Version" src="https://img.shields.io/packagist/v/chr15k/php-typos"></a>
         <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="License" src="https://img.shields.io/github/license/chr15k/php-typos"></a>

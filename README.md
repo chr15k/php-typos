@@ -1,12 +1,24 @@
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="art/header-dark.png">
+    <img alt="Logo for essentials" src="art/header-light.png">
+</picture>
+
+<p align="center">
+    <p align="center">
+        <a href="https://github.com/chr15k/php-typos/actions"><img alt="GitHub Workflow Status (master)" src="https://img.shields.io/github/actions/workflow/status/chr15k/php-typos/tests.yml"></a>
+        <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/chr15k/php-typos"></a>
+        <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="Latest Version" src="https://img.shields.io/packagist/v/chr15k/php-typos"></a>
+        <a href="https://packagist.org/packages/chr15k/php-typos"><img alt="License" src="https://img.shields.io/github/license/chr15k/php-typos"></a>
+    </p>
+</p>
+
+------
+
 # Typos for PHP
 
-A blistering fast, zero-dependency source code spellchecker for PHP and Laravel projects.
+A blistering fast, zero-dependency source code spellchecker for PHP projects.
 
 This package serves as a seamless PHP wrapper **powered by [typos](https://github.com/crate-ci/typos) Rust CLI**. It automatically detects your operating system and architecture, provisions the correct pre-compiled binary, and hooks it directly into your Composer environment with zero manual setup.
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/chr15k/typos.svg?style=flat-square)](https://packagist.org/packages/chr15k/typos)
-[![Total Downloads](https://img.shields.io/packagist/dt/chr15k/typos.svg?style=flat-square)](https://packagist.org/packages/chr15k/typos)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 ---
 

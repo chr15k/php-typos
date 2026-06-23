@@ -34,7 +34,7 @@ The correct platform binary ships with the package — no Rust, Cargo, or Homebr
 Install as a development dependency:
 
 ```bash
-composer require chr15k/typos --dev
+composer require chr15k/php-typos --dev
 ```
 
 Then initialise a configuration file in your project root:

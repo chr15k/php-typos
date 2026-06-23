@@ -24,11 +24,6 @@ final class CheckCommand extends Command
             return $this->initConfiguration($output);
         }
 
-        $paths = $input->getArgument('paths');
-        $paths = is_string($paths) ? $paths : '.';
-
-        $write = (bool) $input->getOption('write');
-
         try {
             $binaryPath = BinaryResolver::getBinaryPath();
         } catch (Exception $exception) {
@@ -37,10 +32,38 @@ final class CheckCommand extends Command
             return Command::FAILURE;
         }
 
-        $commandArgs = [$binaryPath, $paths];
+        $write = (bool) $input->getOption('write');
+        $config = $input->getOption('config');
+
+        $paths = $input->getArgument('paths');
+
+        $diff = (bool) $input->getOption('diff');
+        $format = $input->getOption('format');
+
+        if ($write && $diff) {
+            $output->writeln('<error>❌ --write and --diff cannot be used together.</error>');
+
+            return Command::FAILURE;
+        }
+
+        $commandArgs = array_merge([$binaryPath], $paths ?: ['.']);
+
+        if ($config) {
+            $commandArgs[] = '--config';
+            $commandArgs[] = $config;
+        }
 
         if ($write) {
             $commandArgs[] = '--write-changes';
+        }
+
+        if ($diff) {
+            $commandArgs[] = '--diff';
+        }
+
+        if ($format) {
+            $commandArgs[] = '--format';
+            $commandArgs[] = $format;
         }
 
         try {
@@ -80,8 +103,10 @@ final class CheckCommand extends Command
         $this->setDescription('Run the blacklist spellchecker across the repository source files')
             ->addOption('init', 'i', InputOption::VALUE_NONE, 'Initialize a new configuration file.')
             ->addOption('write', 'w', InputOption::VALUE_NONE, 'Fix typos by writing changes directly to the files.')
-            ->addArgument('paths', InputArgument::OPTIONAL, 'Paths to scan.')
-            ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file (defaults to project root).');
+            ->addOption('diff', 'd', InputOption::VALUE_NONE, 'Show a unified diff of proposed changes without writing.')
+            ->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Output format (brief, long, json).', 'long')
+            ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file (defaults to project root).')
+            ->addArgument('paths', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Paths to scan.');
     }
 
     /*

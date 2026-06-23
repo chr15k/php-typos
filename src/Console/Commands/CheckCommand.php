@@ -29,8 +29,6 @@ final class CheckCommand extends Command
 
         $write = (bool) $input->getOption('write');
 
-        $output->writeln("\n<info>Scanning codebase for typos...</info>\n");
-
         try {
             $binaryPath = BinaryResolver::getBinaryPath();
         } catch (Exception $exception) {
@@ -48,7 +46,10 @@ final class CheckCommand extends Command
         try {
             $process = new Process($commandArgs);
             $process->setTimeout(120);
-            $process->setTty(true);
+
+            if (Process::isTtySupported()) {
+                $process->setTty(true);
+            }
 
             $exitCode = $process->run(function (string $type, string $buffer) use ($output): void {
                 if ($type === Process::ERR) {

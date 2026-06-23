@@ -8,9 +8,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 it('passes with no typos', function (): void {
     $commandTester = new CommandTester(new CheckCommand);
 
-    $commandTester->execute([
-        '--path' => 'tests/Fixtures/UserRegistrationService.php',
-    ]);
+    $commandTester->execute(['paths' => 'tests/Fixtures/UserRegistrationService.php']);
 
     $output = $commandTester->getDisplay();
 
@@ -22,9 +20,7 @@ it('passes with no typos', function (): void {
 it('fails with typos', function (): void {
     $commandTester = new CommandTester(new CheckCommand);
 
-    $commandTester->execute([
-        '--path' => 'tests/Fixtures/UserRegistrationServiceWithTypos.php',
-    ]);
+    $commandTester->execute(['paths' => 'tests/Fixtures/UserRegistrationServiceWithTypos.php']);
 
     $output = $commandTester->getDisplay();
 

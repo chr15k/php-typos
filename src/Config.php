@@ -33,7 +33,7 @@ final class Config
             return false;
         }
 
-        $source = dirname(__DIR__).'/stubs/_typos.toml';
+        $source = dirname(__DIR__).'/_typos.toml';
 
         if (! file_exists($source)) {
             return false;

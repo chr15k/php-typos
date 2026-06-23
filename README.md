@@ -16,9 +16,9 @@
 
 # Typos for PHP
 
-A blistering fast, zero-dependency source code spellchecker for PHP projects.
+A blistering fast source code spellchecker for PHP projects, powered by the [typos](https://github.com/crate-ci/typos) Rust CLI.
 
-This package serves as a seamless PHP wrapper **powered by [typos](https://github.com/crate-ci/typos) Rust CLI**. It automatically detects your operating system and architecture, provisions the correct pre-compiled binary, and hooks it directly into your Composer environment with zero manual setup.
+The correct platform binary ships with the package — no Rust, Cargo, or Homebrew required. Run it the same way you run Pint or PHPStan, and it works the same way in CI.
 
 ---
 

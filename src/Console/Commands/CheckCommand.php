@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chr15k\Typos\Console\Commands;
 
 use Chr15k\Typos\Config;
+use Chr15k\Typos\Support\BinaryResolver;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -30,38 +31,12 @@ final class CheckCommand extends Command
 
         $output->writeln("\n<info>Scanning codebase for typos...</info>\n");
 
-        $version = '1.47.2';
-        $os = PHP_OS_FAMILY;
-        $arch = php_uname('m');
-
-        // Match the exact naming convention of the official releases
-        $binaryName = match (true) {
-            $os === 'Darwin' && in_array($arch, ['arm64', 'aarch64'], true) => sprintf('typos-v%s-aarch64-apple-darwin', $version),
-            $os === 'Darwin' && $arch === 'x86_64'                          => sprintf('typos-v%s-x86_64-apple-darwin', $version),
-            $os === 'Linux' && in_array($arch, ['arm64', 'aarch64'], true)  => sprintf('typos-v%s-aarch64-unknown-linux-musl', $version),
-            $os === 'Linux' && $arch === 'x86_64'                           => sprintf('typos-v%s-x86_64-unknown-linux-musl', $version),
-            $os === 'Windows' && $arch === 'x86_64'                         => sprintf('typos-v%s-x86_64-pc-windows-msvc.exe', $version),
-            default                                                         => null,
-        };
-
-        if (! $binaryName) {
-            $output->writeln(sprintf('<error>❌ Unsupported OS/Architecture combination: %s (%s)</error>', $os, $arch));
+        try {
+            $binaryPath = BinaryResolver::getBinaryPath();
+        } catch (Exception $exception) {
+            $output->writeln(sprintf('<error>❌ Compatibility Error: %s</error>', $exception->getMessage()));
 
             return Command::FAILURE;
-        }
-
-        // Resolves to the root bin/ directory from src/Console/Commands/CheckCommand.php
-        $binaryPath = dirname(__DIR__, 3).'/bin/'.$binaryName.'/typos';
-
-        if (! file_exists($binaryPath)) {
-            $output->writeln(sprintf('<error>❌ Executable binary missing at: %s</error>', $binaryPath));
-
-            return Command::FAILURE;
-        }
-
-        // Safeguard to ensure executable permissions are active on Linux/macOS
-        if ($os !== 'Windows' && ! is_executable($binaryPath)) {
-            @chmod($binaryPath, 0755);
         }
 
         $commandArgs = [$binaryPath, $paths];
@@ -76,7 +51,11 @@ final class CheckCommand extends Command
             $process->setTty(true);
 
             $exitCode = $process->run(function (string $type, string $buffer) use ($output): void {
-                $output->write($buffer);
+                if ($type === Process::ERR) {
+                    $output->write(sprintf('<error>%s</error>', $buffer));
+                } else {
+                    $output->write($buffer);
+                }
             });
         } catch (Exception $exception) {
             $output->writeln(sprintf('<error>❌ Runtime error: %s</error>', $exception->getMessage()));

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Chr15k\Typos;
 
+use RuntimeException;
+
 final class Config
 {
     private const string CONFIGURATION_FILE = '_typos.toml';
@@ -42,6 +44,19 @@ final class Config
 
     private static function projectPath(): string
     {
-        return self::$projectPath ??= getcwd();
+        if (self::$projectPath !== null) {
+            return self::$projectPath;
+        }
+
+        $currentDirectory = getcwd();
+
+        if ($currentDirectory === false) {
+            throw new RuntimeException(
+                'Unable to determine the current working directory. '.
+                'Please verify that the directory exists and has proper read permissions.'
+            );
+        }
+
+        return self::$projectPath = $currentDirectory;
     }
 }

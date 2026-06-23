@@ -1,0 +1,82 @@
+{
+    "name": "chr15k/php-typos",
+    "description": "Native, ultra-fast spellchecking and fixing for PHP codebases.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chris Keller",
+            "email": "ctk8501@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "symfony/console": "^8.1",
+        "symfony/process": "^8.1"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.29",
+        "pestphp/pest": "^4.7",
+        "phpstan/phpstan": "^2.2",
+        "rector/rector": "^2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Chr15k\\Typos\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/php-typos"
+    ],
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "scripts": {
+        "post-install-cmd": [
+            "@php -r \"if(PHP_OS_FAMILY !== 'Windows') foreach(glob('bin/typos-')?:[] as \\$f) @chmod(\\$f, 0755);\""
+        ],
+        "post-update-cmd": [
+            "@php -r \"if(PHP_OS_FAMILY !== 'Windows') foreach(glob('bin/typos-')?:[] as \\$f) @chmod(\\$f, 0755);\""
+        ],
+        "unit": [
+            "pest --colors=always --parallel"
+        ],
+        "lint": [
+            "pint --parallel"
+        ],
+        "lint:check": [
+            "pint --parallel --test"
+        ],
+        "refactor": [
+            "rector"
+        ],
+        "refactor:check": [
+            "rector --dry-run"
+        ],
+        "fix": [
+            "@lint",
+            "@refactor",
+            "@lint"
+        ],
+        "types:check": [
+            "phpstan analyse --memory-limit=2G"
+        ],
+        "ci": [
+            "@lint:check",
+            "@refactor:check",
+            "@types:check",
+            "@unit"
+        ]
+    }
+}

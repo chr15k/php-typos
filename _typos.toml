@@ -1,0 +1,16 @@
+# Typos Global Configuration
+# Use this file to customize folder exclusions and skipped words for the spellchecker.
+
+[files]
+# Directories and paths to completely ignore during scanning
+extend-exclude = [
+    "vendor",
+    "node_modules",
+    "bootstrap/cache",
+    "storage",
+    ".git"
+]
+
+[default]
+# Add words here (as key-value pairs) that should be skipped globally
+# extend-words = { "flgas" = "flgas" }

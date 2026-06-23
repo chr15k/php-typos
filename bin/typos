@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Chr15k\Typos\Console\Commands\CheckCommand;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
+
+foreach ([
+    dirname(__DIR__, 4).'/vendor/autoload.php',
+    dirname(__DIR__).'/vendor/autoload.php',
+] as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        include_once $autoloadPath;
+
+        break;
+    }
+}
+
+$application = new Application(
+    'Typos',
+    '0.1.0',
+);
+
+$application->setCommandLoader(new FactoryCommandLoader([
+    'check'   => static fn (): CheckCommand => new CheckCommand
+]));
+
+$application->setDefaultCommand('check', true);
+
+$application->run();

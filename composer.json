@@ -9,6 +9,17 @@
             "email": "ctk8501@gmail.com"
         }
     ],
+    "keywords": [
+        "chr15k",
+        "spellcheck",
+        "spell-checker",
+        "typos",
+        "static-analysis",
+        "code-quality",
+        "php",
+        "cli",
+        "developer-tools"
+    ],
     "require": {
         "php": "^8.3",
         "symfony/console": "^7.4",

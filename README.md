@@ -22,18 +22,6 @@ The correct platform binary ships with the package — no Rust, Cargo, or Homebr
 
 ---
 
-## Why this package?
-
-The underlying `typos` CLI is arguably the fastest source code spellchecker available, but managing global binary installations across diverse developer teams and headless CI environments can be a headache.
-
-This package changes that by turning spellchecking into a project-wide standard:
-
-- **Zero Dependencies:** No need to install Rust, Cargo, Homebrew, or global binaries. The correct platform binary ships with the package.
-- **Team Alignment:** One configuration file locks the rules for everyone on the team.
-- **CI/CD Ready:** Works out of the box on GitHub Actions, GitLab CI, or any automated runner via standard Composer caching.
-
----
-
 ## Requirements
 
 - PHP 8.3+

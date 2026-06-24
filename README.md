@@ -104,6 +104,37 @@ Show a unified diff of proposed corrections without modifying any files. Useful 
 
 ---
 
+### `--files` / `-fi`
+
+List the files being scanned without checking for typos.
+
+```bash
+./vendor/bin/typos --files
+./vendor/bin/typos src/ --files
+```
+
+---
+
+### `--identifiers` / `-id`
+
+List all identifiers (variable names, function names, etc.) found during the scan.
+
+```bash
+./vendor/bin/typos --identifiers
+```
+
+---
+
+### `--words` / `-wo`
+
+List all words found during the scan.
+
+```bash
+./vendor/bin/typos --words
+```
+
+---
+
 ### `--format` / `-f`
 
 Control the output format. Defaults to `long`.

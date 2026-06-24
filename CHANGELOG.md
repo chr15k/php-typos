@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Add missing flags to README (--words, --identifers, --files)
+- Add missing flags to README (--words, --identifiers, --files)
 
 ## [v0.2.1] - 2026-06-24
 

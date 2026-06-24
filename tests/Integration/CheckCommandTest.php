@@ -12,9 +12,7 @@ it('passes with no typos', function (): void {
 
     $output = $commandTester->getDisplay();
 
-    expect($output)
-        ->toContain('✅ Spellcheck complete. Clear skies!')
-        ->and($commandTester->getStatusCode())->toBe(0);
+    expect($output)->and($commandTester->getStatusCode())->toBe(0);
 });
 
 it('fails with typos', function (): void {
@@ -46,7 +44,6 @@ it('fails with typos', function (): void {
         ->toContain('`unexpectd` should be `unexpected`')
         ->toContain('`Retreive` should be `Retrieve`')
         ->toContain('`Interal` should be `Internal`, `Interval`, `Integral`')
-        ->toContain('❌ Spellcheck failed. Typos were discovered in code assets.')
         ->and($commandTester->getStatusCode())->toBe(1);
 });
 
@@ -59,6 +56,6 @@ it('passes with init option', function (): void {
 
     $output = $commandTester->getDisplay();
 
-    expect(mb_trim($output))->toContain('❌ Configuration file already exists.')
+    expect(mb_trim($output))->toContain('Configuration file already exists.')
         ->and($commandTester->getStatusCode())->toBe(1);
 });

@@ -14,6 +14,17 @@ final class BinaryResolver
     private const string ENGINE_VERSION = '1.47.2';
 
     /**
+     * @var array<string, string>
+     */
+    private const array TARGETS = [
+        'Darwin-arm64'   => 'aarch64-apple-darwin',
+        'Darwin-x86_64'  => 'x86_64-apple-darwin',
+        'Linux-arm64'    => 'aarch64-unknown-linux-musl',
+        'Linux-x86_64'   => 'x86_64-unknown-linux-musl',
+        'Windows-x86_64' => 'x86_64-pc-windows-msvc',
+    ];
+
+    /**
      * The cached absolute path to the resolved binary.
      */
     private static ?string $cachedPath = null;
@@ -25,45 +36,71 @@ final class BinaryResolver
      */
     public static function getBinaryPath(): string
     {
-        // If we already figured this out during this request lifecycle, return it instantly
         if (self::$cachedPath !== null) {
             return self::$cachedPath;
         }
 
+        $path = self::resolveTargetBinary();
+
+        return self::$cachedPath = $path;
+    }
+
+    private static function resolveTargetBinary(): string
+    {
         $os = PHP_OS_FAMILY;
-        $arch = php_uname('m');
+        $arch = self::normalizeArchitecture(php_uname('m'));
 
-        $isArm = in_array($arch, ['arm64', 'aarch64'], true);
-        $isX86 = in_array($arch, ['x86_64', 'amd64', 'AMD64'], true);
+        $target = self::TARGETS[sprintf('%s-%s', $os, $arch)] ?? null;
 
-        $binary = match (true) {
-            $os === 'Darwin' && $isArm  => sprintf('typos-v%s-aarch64-apple-darwin', self::ENGINE_VERSION),
-            $os === 'Darwin' && $isX86  => sprintf('typos-v%s-x86_64-apple-darwin', self::ENGINE_VERSION),
-            $os === 'Linux' && $isArm   => sprintf('typos-v%s-aarch64-unknown-linux-musl', self::ENGINE_VERSION),
-            $os === 'Linux' && $isX86   => sprintf('typos-v%s-x86_64-unknown-linux-musl', self::ENGINE_VERSION),
-            $os === 'Windows' && $isX86 => sprintf('typos-v%s-x86_64-pc-windows-msvc', self::ENGINE_VERSION),
-            default                     => null,
+        if ($target === null) {
+            throw new RuntimeException(
+                sprintf(
+                    'The platform "%s (%s)" is currently not supported by this package.',
+                    $os,
+                    $arch
+                )
+            );
+        }
+
+        $binaryDirectory = sprintf('typos-v%s-%s', self::ENGINE_VERSION, $target);
+        $binaryName = $os === 'Windows' ? 'typos.exe' : 'typos';
+        $path = sprintf('%s/bin/%s/%s', dirname(__DIR__, 2), $binaryDirectory, $binaryName);
+
+        self::ensureBinaryExists($path, $binaryDirectory, $os);
+
+        return $path;
+    }
+
+    private static function normalizeArchitecture(string $architecture): string
+    {
+        return match ($architecture) {
+            'arm64', 'aarch64'         => 'arm64',
+            'x86_64', 'amd64', 'AMD64' => 'x86_64',
+            default                    => $architecture,
         };
+    }
 
-        if ($binary === null) {
+    /**
+     * @throws RuntimeException
+     */
+    private static function ensureBinaryExists(
+        string $path,
+        string $binaryDirectory,
+        string $os
+    ): void {
+        if (! file_exists($path)) {
             throw new RuntimeException(
-                sprintf('The platform "%s (%s)" is currently not supported by this package.', $os, $arch)
+                sprintf(
+                    'Required native binary asset is missing from the package: %s',
+                    $binaryDirectory
+                )
             );
         }
 
-        $file = $os === 'Windows' ? 'typos.exe' : 'typos';
-        $absolutePath = dirname(__DIR__, 2).sprintf('/bin/%s/%s', $binary, $file);
-
-        if (! file_exists($absolutePath)) {
-            throw new RuntimeException(
-                sprintf('Required native binary asset is missing from the package tracking: %s', $binary)
-            );
+        if ($os === 'Windows' || is_executable($path)) {
+            return;
         }
 
-        if ($os !== 'Windows' && ! is_executable($absolutePath)) {
-            @chmod($absolutePath, 0755);
-        }
-
-        return self::$cachedPath = $absolutePath;
+        chmod($path, 0755);
     }
 }

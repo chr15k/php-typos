@@ -206,12 +206,14 @@ Add a script to your `composer.json` to run alongside your other checks:
 
 ```json
 "scripts": {
+    "typos:check": "typos",
     "ci": [
         "@lint:check",
+        "@refactor:check",
         "@types:check",
-        "@unit",
-        "./vendor/bin/typos"
-    ]
+        "@typos:check",
+        "@unit"
+    ],
 }
 ```
 

@@ -47,7 +47,7 @@ final class CheckCommand extends Command
 
         if ($exitCode !== 0) {
             $io->error('Typos detected. The scanned paths are grammatically unstable!');
-            $io->outlineNote('Run with -w to automatically fix typos.');
+            $io->note('Run with -w to automatically fix typos.');
 
             return Command::FAILURE;
         }
